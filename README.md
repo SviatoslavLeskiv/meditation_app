@@ -1,31 +1,16 @@
-# bookreader
+# teste
 
-Book reader app
+A new Flutter project.
 
 ## Getting Started
 
-Whole solution consists of Bookreader web app, Bookreader landing app, 
-epub reader library and mobile application, that use this lib.
+This project is a starting point for a Flutter application.
 
-😐 You can see code duplication and hard for reading code, 
-   cause I worked on multiple projects and didn't have enough time for writing good code.
+A few resources to get you started if this is your first Flutter project:
 
-Flavors:
-PROD:
---flavor=prod
-prod
-main.dart
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-DEV
---flavor=dev
---flavor=prod
-dev
-main_dev.dart
-
-Run app on prod, cause in dev environment LCP library doesn't work, cause we don't 
-want to waste money and time on setup dev environment on Amazon for running LCP lib for dev purposes
-
-for the composing release apk:
-fvm flutter build apk --flavor prod -t lib/main.dart
-
-# meditation_app
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
