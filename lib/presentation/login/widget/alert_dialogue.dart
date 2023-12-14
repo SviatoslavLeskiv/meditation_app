@@ -9,7 +9,8 @@ class PlainDialog extends StatelessWidget {
 
   final Map<String, Function()>? actions;
 
-  PlainDialog({
+  const PlainDialog({
+    super.key,
     this.title,
     this.subtitle,
     this.actions,
@@ -81,7 +82,7 @@ class PlainDialog extends StatelessWidget {
                         .withOpacity(0.2),
                   ),
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
         ],
       );
 
@@ -100,7 +101,7 @@ class PlainDialog extends StatelessWidget {
                         .withOpacity(0.2),
                   ),
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
         ],
       );
 
@@ -120,13 +121,13 @@ class PlainDialog extends StatelessWidget {
       if (Platform.isIOS) {
         return CupertinoDialogAction(
           isDefaultAction: true,
-          child: Text(action.text),
           onPressed: action.onPressed,
+          child: Text(action.text),
         );
       } else {
         return TextButton(
-          child: Text(action.text),
           onPressed: action.onPressed,
+          child: Text(action.text),
         );
       }
     }).toList();

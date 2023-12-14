@@ -9,7 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 const defaultColor = Color(0xFF589AAF);
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final bool isLogout;
+
+  const LoginPage({
+    super.key,
+    this.isLogout = true,
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -53,6 +58,18 @@ class _LoginPageState extends State<LoginPage> {
     _preferences = await SharedPreferences.getInstance();
     _name = _preferences.getString('name');
     _password = _preferences.getString('password');
+
+    if (_name != null && _password != null && !widget.isLogout) {
+      Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => BottomNavigationBarExample(
+              preferences: _preferences,
+            ),
+          ),
+        );
+      });
+    }
   }
 
   @override
@@ -60,168 +77,165 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: const Color(0xFF589AAF).withOpacity(0.1),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
-              Center(
-                child: SvgPicture.asset(
-                  'assets/logo.svg',
-                  height: 100,
-                ),
-              ),
-              const Text(
-                'Meditation',
-                style: TextStyle(
-                  color: defaultColor,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 24,
-                ),
-              ),
-              const SizedBox(height: 40),
-              BorderedTextField(
-                labelText: 'Імʼя',
-                hintText: '',
-                maxLength: 100,
-                isError: false,
-                keyboardType: TextInputType.emailAddress,
-                autofillHints: const [AutofillHints.email],
-                textCapitalization: TextCapitalization.none,
-                controller: _nameController,
-                focusNode: _nameFocus,
-              ),
-              const SizedBox(height: 10),
-              BorderedTextField.passcode(
-                labelText: 'Пароль',
-                hintText: '',
-                isError: false,
-                controller: _passwordController,
-                focusNode: _passwordFocus,
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 85,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: _isRegister ? 1 : 0,
-                  child: BorderedTextField.passcode(
-                    labelText: 'Повторіть пароль',
-                    hintText: '',
-                    isError: false,
-                    controller: _repeatPasswordController,
-                    focusNode: _repeatPasswordFocus,
+        backgroundColor: Colors.white,
+        body: Container(
+          color: const Color(0xFF589AAF).withOpacity(0.1),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                Center(
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 350,
                   ),
                 ),
-              ),
-              const Spacer(),
-              FractionallySizedBox(
-                widthFactor: 1,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_isRegister) {
-                      if (_nameController.text.trim().length < 2) {
-                        showAppDialog(
-                          context,
-                          actions: {'Ok': () => Navigator.pop(context)},
-                          subtitle: 'Введіть правильно ваше імʼя!',
-                          title: "Ой",
-                        );
-                      } else {
-                        if (_passwordController.text ==
-                            _repeatPasswordController.text) {
-                          await _preferences.setString(
-                            'name',
-                            _nameController.text.trim(),
-                          );
-                          await _preferences.setString(
-                            'password',
-                            _passwordController.text.trim(),
-                          );
-                          _name = _nameController.text.trim();
-                          _password = _passwordController.text.trim();
-                          _isRegister = false;
-                          _passwordController.clear();
-                          _repeatPasswordController.clear();
-                          setState(() {});
-                        } else {
-                          showAppDialog(
-                            context,
-                            actions: {'Ok': () => Navigator.pop(context)},
-                            subtitle: 'Паролі не збігаються!',
-                            title: "Ой",
-                          );
-                        }
-                      }
-                    } else {
-                      _isLogin = true;
-                      setState(() {});
-                      Future.delayed(const Duration(seconds: 2))
-                          .whenComplete(() {
-                        final success = _name == _nameController.text.trim() &&
-                            _password == _passwordController.text;
-                        if (success) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const BottomNavigationBarExample(),
-                            ),
-                          );
-                        } else {
-                          showAppDialog(
-                            context,
-                            actions: {'Ok': () => Navigator.pop(context)},
-                            subtitle: 'Перевірте, будь ласка, імʼя та пароль!',
-                            title: "Ой",
-                          );
-                        }
-                        _isLogin = false;
-                        setState(() {});
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: defaultColor,
-                  ),
-                  child: AnimatedSwitcher(
+                BorderedTextField(
+                  labelText: 'Імʼя',
+                  hintText: '',
+                  maxLength: 100,
+                  isError: false,
+                  keyboardType: TextInputType.emailAddress,
+                  autofillHints: const [AutofillHints.email],
+                  textCapitalization: TextCapitalization.none,
+                  controller: _nameController,
+                  focusNode: _nameFocus,
+                ),
+                const SizedBox(height: 10),
+                BorderedTextField.passcode(
+                  labelText: 'Пароль',
+                  hintText: '',
+                  isError: false,
+                  controller: _passwordController,
+                  focusNode: _passwordFocus,
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 85,
+                  child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),
-                    child: _isLogin
-                        ? const CupertinoActivityIndicator(
-                            color: Colors.white,
-                          )
-                        : Text(
-                            _isRegister
-                                ? 'Зареєструватись'.toUpperCase()
-                                : 'Увійти'.toUpperCase(),
-                            style: const TextStyle(
+                    opacity: _isRegister ? 1 : 0,
+                    child: BorderedTextField.passcode(
+                      labelText: 'Повторіть пароль',
+                      hintText: '',
+                      isError: false,
+                      controller: _repeatPasswordController,
+                      focusNode: _repeatPasswordFocus,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                FractionallySizedBox(
+                  widthFactor: 1,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_isRegister) {
+                        if (_nameController.text.trim().length < 2) {
+                          showAppDialog(
+                            context,
+                            actions: {'Ok': () => Navigator.pop(context)},
+                            subtitle: 'Введіть правильно ваше імʼя!',
+                            title: "Ой",
+                          );
+                        } else {
+                          if (_passwordController.text ==
+                              _repeatPasswordController.text) {
+                            await _preferences.setString(
+                              'name',
+                              _nameController.text.trim(),
+                            );
+                            await _preferences.setString(
+                              'password',
+                              _passwordController.text.trim(),
+                            );
+                            _name = _nameController.text.trim();
+                            _password = _passwordController.text.trim();
+                            _isRegister = false;
+                            _passwordController.clear();
+                            _repeatPasswordController.clear();
+                            setState(() {});
+                          } else {
+                            showAppDialog(
+                              context,
+                              actions: {'Ok': () => Navigator.pop(context)},
+                              subtitle: 'Паролі не збігаються!',
+                              title: "Ой",
+                            );
+                          }
+                        }
+                      } else {
+                        _isLogin = true;
+                        setState(() {});
+                        Future.delayed(const Duration(seconds: 2))
+                            .whenComplete(() {
+                          final success =
+                              _name == _nameController.text.trim() &&
+                                  _password == _passwordController.text;
+                          if (success) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (_) => BottomNavigationBarExample(
+                                  preferences: _preferences,
+                                ),
+                              ),
+                            );
+                          } else {
+                            showAppDialog(
+                              context,
+                              actions: {'Ok': () => Navigator.pop(context)},
+                              subtitle:
+                                  'Перевірте, будь ласка, імʼя та пароль!',
+                              title: "Ой",
+                            );
+                          }
+                          _isLogin = false;
+                          setState(() {});
+                        });
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: defaultColor,
+                    ),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: _isLogin
+                          ? const CupertinoActivityIndicator(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                            )
+                          : Text(
+                              _isRegister
+                                  ? 'Зареєструватись'.toUpperCase()
+                                  : 'Увійти'.toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              GestureDetector(
-                onTap: () {
-                  _isRegister = !_isRegister;
-                  setState(() {});
-                },
-                child: Text(
-                  (_isRegister ? 'Вже маєте акаунт?' : 'Зареєструватись')
-                      .toUpperCase(),
-                  style: const TextStyle(
-                    color: defaultColor,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 14,
+                const SizedBox(height: 15),
+                GestureDetector(
+                  onTap: () {
+                    _isRegister = !_isRegister;
+                    setState(() {});
+                  },
+                  child: Text(
+                    (_isRegister ? 'Вже маєте акаунт?' : 'Зареєструватись')
+                        .toUpperCase(),
+                    style: const TextStyle(
+                      color: defaultColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
-            ],
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
